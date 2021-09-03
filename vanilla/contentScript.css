@@ -1,0 +1,122 @@
+#popup {
+  display: none;
+  position: absolute;
+  width: 128px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px 0px;
+}
+
+.category-code-folder {
+  display: none;
+}
+
+.secondary-popup {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px 0px;
+  text-align: center;
+}
+
+.secondary-btn {
+  cursor: pointer;
+  background-color: white;
+  border: 0px;
+}
+
+.secondary-btn:hover {
+  background-color: rgba(255, 255, 0, 0.555);
+}
+
+.color-selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 4px;
+}
+
+.fyp-color-btn {
+  cursor: pointer;
+  border: 0px;
+  height: 20px;
+  width: 20px;
+  border-radius: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-btn-pink {
+  background-color: #F7CCD7;
+}
+
+.color-btn-orange {
+  background-color: #FADF80;
+}
+
+.color-btn-yellow {
+  background-color: #FEFB8B;
+}
+
+.color-btn-green {
+  background-color: #DAFE79;
+}
+
+.color-btn-blue {
+  background-color: #C4FDEC;
+}
+
+.tick {
+  display: none;
+  height: 20px;
+  width: 20px;
+  max-width: 100px;
+  padding: 4px;
+}
+
+.selected {
+  display: block;
+}
+
+.btn {
+  cursor: pointer;
+  background-color: white;
+  width: 100%;
+  border: 1px solid #878787;
+  /* border: 0px; */
+}
+
+
+.fyp-highlight {
+  cursor: pointer;
+}
+
+.fyp-highlight--pink {
+  background-color: #ff9ab3;
+}
+
+.fyp-highlight--orange {
+  background-color: #fada66;
+}
+
+.fyp-highlight--yellow {
+  background-color: #fffa67;
+}
+
+.fyp-highlight--green {
+  background-color: #d2fa63;
+}
+
+.fyp-highlight--blue {
+  background-color: #8affdc;
+}
+
+
+.fyp-highlight:hover {
+  cursor: pointer;
+  background-color: rgb(187, 187, 0);
+}

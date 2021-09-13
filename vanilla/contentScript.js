@@ -347,3 +347,6 @@ function generateRandomId() {
 // schema to store highlights
 // store schema/table of highlights in localStorage
 // export data from localStorage to csv
+const root = document.getElementById('root');
+console.log('root', root);
+root.style.backgroundColor = 'yellow';

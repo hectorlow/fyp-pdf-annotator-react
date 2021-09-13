@@ -1,10 +1,22 @@
-import React from "react";
+// file collects all js to be injected into pdf
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import AnnotationPopup from './components/AnnotationPopup';
+import Listener from './listener';
 
-const hello = () => {
-  console.log('hello content')
-};
-console.log('content script running');
-hello();
+// eslint-disable-next-line no-console
+console.log('react content script running');
 
-export default hello;
+const root = document.createElement('div');
+root.innerHTML = "<div id='root'></div>";
+
+const App = () => (
+  <div>
+    <AnnotationPopup />
+    <Listener />
+  </div>
+);
+
+document.body.appendChild(root);
+ReactDOM.render(<App />, document.getElementById('root'));

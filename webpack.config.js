@@ -32,7 +32,22 @@ module.exports = {
         test: /\.scss$/i,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.png/i,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 25600,
+          },
+        },
+      },
     ],
+  },
+
+  resolve: {
+    alias: {
+      src: path.resolve(__dirname, 'src/'),
+    },
   },
   // plugins: [
   //   new HtmlWebpackPlugin({

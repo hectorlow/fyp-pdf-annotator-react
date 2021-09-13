@@ -1,4 +1,6 @@
 .anno-popup {
+  top: 0;
+  left: 0;
   position: absolute;
   width: 128px;
   background-color: white;
@@ -14,5 +16,5 @@
 }
 
 .anno-options {
-  // 
+  text-transform: capitalize;
 }

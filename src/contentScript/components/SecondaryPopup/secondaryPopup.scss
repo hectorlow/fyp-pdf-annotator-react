@@ -1,0 +1,11 @@
+.secondary-popup {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+
+  &__item {
+    text-align: center;
+    background-color: white;
+    width: 112px;
+  }
+}

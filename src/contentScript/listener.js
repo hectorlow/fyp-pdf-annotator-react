@@ -16,12 +16,6 @@ const Listener = () => {
       console.log('use effect cleanup function');
     };
   }, []);
-
-  return (
-    <div>
-      Listener component
-    </div>
-  );
 };
 
 export default Listener;

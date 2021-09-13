@@ -23,4 +23,16 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
     'jsx-a11y/control-has-associated-label': 'off',
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        moduleDirectory: ['node_modules', 'src'],
+      },
+      alias: {
+        map: [
+          ['src', './src'],
+        ],
+      },
+    },
+  },
 };

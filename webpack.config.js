@@ -1,8 +1,10 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const WebpackBundleAnalyzer = require('webpack-bundle-analyzer')
+// .BundleAnalyzerPlugin;
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
     // background: './src/background/index.js',
     contentScript: './src/contentScript/index.js',
@@ -49,6 +51,9 @@ module.exports = {
       src: path.resolve(__dirname, 'src/'),
     },
   },
+  plugins: [
+    // new WebpackBundleAnalyzer(),
+  ],
   // plugins: [
   //   new HtmlWebpackPlugin({
   //     template: path.join(__dirname, "src", "index.html"),

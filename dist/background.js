@@ -1,6 +1,6 @@
 // background script starts when extension is loaded
 
-console.log("Background script running")
+console.log('Background script running');
 
 let annotateStatus = 'not set';
 
@@ -10,16 +10,16 @@ chrome.storage.local.get('annotate', (result) => {
 });
 
 if (annotateStatus === undefined) {
-  chrome.storage.local.set({ 'annotate': false }, () => {
+  chrome.storage.local.set({ annotate: false }, () => {
     console.log('No initial status, set annotate status to false');
-  })
+  });
 }
 
 // add listener to when user selects text - on mouse up listener
 // do smth when text is selected
 
 function getSelectionText() {
-  var text = '';
+  let text = '';
   if (window.getSelection) {
     text = window.getSelection().toString();
   }
@@ -30,24 +30,6 @@ function getSelectionText() {
 console.log('body');
 
 chrome.action.onClicked.addListener();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 //   chrome.tabs.sendMessage(tabs[0].id, { greeting: 'hello'}, (response) => {

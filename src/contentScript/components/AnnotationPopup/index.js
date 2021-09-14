@@ -14,7 +14,7 @@ const data = {
   folder: ['research', 'folder'],
 };
 
-const AnnotationPopup = ({ coord }) => {
+const AnnotationPopup = ({ coord, createHighlight }) => {
   const [options, setOptions] = useState({
     category: 'Category',
     code: 'Code',
@@ -24,6 +24,22 @@ const AnnotationPopup = ({ coord }) => {
   const [selectedOption, setSelectedOption] = useState(false);
   const left = coord.X - 56;
   const top = coord.Y + 24;
+
+  const handleItemSelection = (item) => {
+    setOptions({
+      ...options,
+      [selectedOption]: `${selectedOption}: ${item}`,
+    });
+    setSelectedOption(false);
+  };
+
+  const handleCreateHightlight = () => {
+    if (selectedColor.length === 0) {
+      createHighlight('yellow', options);
+    } else {
+      createHighlight(selectedColor, options);
+    }
+  };
 
   const renderColorBtns = () => (
     colors.map((color) => (
@@ -45,14 +61,6 @@ const AnnotationPopup = ({ coord }) => {
     ))
   );
 
-  const handleItemSelection = (item) => {
-    setOptions({
-      ...options,
-      [selectedOption]: `${selectedOption}: ${item}`,
-    });
-    setSelectedOption(false);
-  };
-
   const renderSecondaryPopup = () => {
     const dataItems = data[selectedOption];
     return (
@@ -71,6 +79,13 @@ const AnnotationPopup = ({ coord }) => {
       <div className="anno-options">
         {renderOptions()}
       </div>
+      <button
+        onClick={handleCreateHightlight}
+        className="anno-create-highlight"
+        type="button"
+      >
+        Create highlight
+      </button>
       <div>
         {selectedOption && renderSecondaryPopup()}
       </div>
@@ -83,6 +98,7 @@ AnnotationPopup.propTypes = {
     X: PropTypes.number,
     Y: PropTypes.number,
   }).isRequired,
+  createHighlight: PropTypes.func.isRequired,
 };
 
 export default AnnotationPopup;

@@ -1,6 +1,5 @@
-import React from "react";
-import './popup.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-const hello = () => {
-  console.log('hello popup');
-};
+ReactDOM.render(<App />, document.getElementById('root-popup'));

@@ -2,18 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './optionButton.scss';
 
-const Option = ({ name, onClick }) => (
+const Option = ({ optionName, value, onClick }) => (
   <button
-    className={`option-btn option-btn__${name}`}
+    className={`option-btn option-btn__${value}`}
     onClick={onClick}
     type="button"
   >
-    {name}
+    {`${optionName}: ${value}`}
   </button>
 );
 
 Option.propTypes = {
-  name: PropTypes.string.isRequired,
+  optionName: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 

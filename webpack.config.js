@@ -9,6 +9,7 @@ module.exports = {
     // background: './src/background/index.js',
     contentScript: './src/contentScript/index.js',
     popup: './src/popup/index.js',
+    options: './src/options/index.js',
   },
   output: {
     filename: '[name].js',

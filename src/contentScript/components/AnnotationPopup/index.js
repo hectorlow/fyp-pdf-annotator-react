@@ -16,10 +16,11 @@ const data = {
 
 const AnnotationPopup = ({ coord, createHighlight }) => {
   const [options, setOptions] = useState({
-    category: 'Category',
-    code: 'Code',
-    folder: 'Folder',
+    category: '',
+    code: '',
+    folder: '',
   });
+
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedOption, setSelectedOption] = useState(false);
   const left = coord.X - 56;
@@ -28,7 +29,7 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
   const handleItemSelection = (item) => {
     setOptions({
       ...options,
-      [selectedOption]: `${selectedOption}: ${item}`,
+      [selectedOption]: `${item}`,
     });
     setSelectedOption(false);
   };
@@ -51,15 +52,19 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
     ))
   );
 
-  const renderOptions = () => (
-    Object.keys(options).map((key) => (
-      <OptionButton
-        name={options[key]}
-        selectedOption={selectedOption}
-        onClick={() => setSelectedOption(key)}
-      />
-    ))
-  );
+  const renderOptions = () => {
+    const keys = Object.keys(options);
+    return (
+      keys.map((key) => (
+        <OptionButton
+          optionName={key}
+          value={options[key]}
+          selectedOption={selectedOption}
+          onClick={() => setSelectedOption(key)}
+        />
+      ))
+    );
+  };
 
   const renderSecondaryPopup = () => {
     const dataItems = data[selectedOption];
@@ -81,7 +86,7 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
       </div>
       <button
         onClick={handleCreateHightlight}
-        className="anno-create-highlight"
+        className="anno-create-highlight-btn"
         type="button"
       >
         Create highlight

@@ -1,0 +1,36 @@
+.category-add {
+  margin-top: 8px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  max-height: 240px;
+  overflow-y: scroll;
+}
+
+.category-entry {
+  cursor: pointer;
+  text-align: left;
+  padding: 4px;
+  width: 100%;
+
+}
+
+.category-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.category-code {
+  font-size: 12px;
+}
+
+.edit-category-modal {
+  position: absolute;
+  left: -50px;
+  top: 24px;
+  background-color: whitesmoke;
+  border: 1px solid blue;
+}

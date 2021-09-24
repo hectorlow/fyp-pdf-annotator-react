@@ -5,6 +5,29 @@ import { v4 as uuidv4 } from 'uuid';
 import AnnotationPopup from './components/AnnotationPopup';
 import Sidebar from './components/Sidebar';
 
+// initialise chrome storage
+chrome.storage.sync.get(['fyp_highlights'], (result) => {
+  if (
+    result.fyp_highlights === undefined
+      || !Array.isArray(result.fyp_highlights)
+  ) {
+    chrome.storage.sync.set({ fyp_highlights: [] }, () => {
+      console.log('Initialise highlights to [] in chrome storage');
+    });
+  }
+});
+
+chrome.storage.sync.get(['fyp_categories'], (result) => {
+  if (
+    result.fyp_categories === undefined
+    || !Array.isArray(result.fyp_categories)
+  ) {
+    chrome.storage.sync.set({ fyp_categories: [] }, () => {
+      console.log('Initialised fyp categories to [] in chrome storage');
+    });
+  }
+});
+
 const App = () => {
   const [selectedText, setSelectedText] = useState('');
   const [displayPopup, setDisplayPopup] = useState(false);
@@ -41,19 +64,11 @@ const App = () => {
     // chrome storage api works seemlessly, amazing
     chrome.storage.sync.get(['fyp_highlights'], (result) => {
       console.log('Saved highlights:', result.fyp_highlights);
-      if (
-        result.fyp_highlights === undefined
-          || !Array.isArray(result.fyp_highlights)
-      ) {
-        chrome.storage.sync.set({ fyp_highlights: [] }, () => {
-          console.log('initialise chrome storage to: []');
-        });
-      } else {
-        setHighlights(result.fyp_highlights);
-      }
+      setHighlights(result.fyp_highlights);
     });
   }, [triggerRerender]);
 
+  // highlight CRUD functions
   const createHighlight = (color, options) => {
     const id = uuidv4();
     const entry = {

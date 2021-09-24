@@ -9,6 +9,14 @@
   background-color: white;
   border: 1px solid green;
 
+  &__categories {
+    padding: 4px;
+  }
+
+  &__highlight-entry-list {
+    margin-top: 8px;
+  }
+
   &__highlight-entry {
     position: relative;
     padding: 8px;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ColorButton from './ColorButton';
 import OptionButton from './OptionButton';
@@ -8,33 +8,50 @@ import './annotationPopup.scss';
 // options, option -> belong to main annotation popup
 // items, item -> belong to secondary popup
 const colors = ['pink', 'orange', 'yellow', 'green', 'blue'];
-const data = {
-  code: ['Lorem ipsum', 'Lorem 2', 'Lorem 3'],
-  category: ['popularity', 'origin'],
-  folder: ['research', 'folder'],
-};
+const dummyFolders = ['research', 'folder'];
+// const data = {
+//   code: ['Lorem ipsum', 'Lorem 2', 'Lorem 3'],
+//   category: ['popularity', 'origin'],
+//   folder: ['research', 'folder'],
+// };
 
 const AnnotationPopup = ({ coord, createHighlight }) => {
-  const [options, setOptions] = useState({
-    category: '',
-    code: '',
-    folder: '',
-  });
-
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCode, setSelectedCode] = useState('');
+  const [selectedFolder, setSelectedFolder] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
-  const [selectedOption, setSelectedOption] = useState(false);
+  const [displaySecondaryPopup, setDisplaySecondaryPopup] = useState(false);
   const left = coord.X - 56;
   const top = coord.Y + 24;
 
-  const handleItemSelection = (item) => {
-    setOptions({
-      ...options,
-      [selectedOption]: `${item}`,
+  useEffect(() => {
+    chrome.storage.sync.get(['fyp_categories'], (result) => {
+      setCategories(result.fyp_categories);
+      console.log('Saved categories', result.fyp_categories);
     });
-    setSelectedOption(false);
+  }, []);
+
+  const handleItemSelection = (item) => {
+    if (selectedOption === 'category') {
+      setSelectedCategory(item);
+      // clear code selection when new category is selected
+      setSelectedCode('');
+    } else if (selectedOption === 'code') {
+      setSelectedCode(item);
+    } else if (selectedOption === 'folder') {
+      setSelectedFolder(item);
+    }
+    setDisplaySecondaryPopup(false);
   };
 
   const handleCreateHightlight = () => {
+    const options = {
+      category: selectedCategory,
+      code: selectedCode,
+      folder: selectedFolder,
+    };
     if (selectedColor.length === 0) {
       createHighlight('yellow', options);
     } else {
@@ -52,22 +69,17 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
     ))
   );
 
-  const renderOptions = () => {
-    const keys = Object.keys(options);
-    return (
-      keys.map((key) => (
-        <OptionButton
-          optionName={key}
-          value={options[key]}
-          selectedOption={selectedOption}
-          onClick={() => setSelectedOption(key)}
-        />
-      ))
-    );
-  };
-
-  const renderSecondaryPopup = () => {
-    const dataItems = data[selectedOption];
+  const renderSecondaryPopup = (option) => {
+    let dataItems;
+    if (option === 'category') {
+      dataItems = categories.map((category) => category.name);
+    } else if (option === 'code') {
+      dataItems = categories.filter(
+        (category) => category.name === selectedCategory,
+      )[0].codes;
+    } else if (option === 'folder') {
+      dataItems = dummyFolders;
+    }
     return (
       <SecondaryPopup
         items={dataItems}
@@ -82,7 +94,32 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
         {renderColorBtns()}
       </div>
       <div className="anno-options">
-        {renderOptions()}
+        {/* {renderOptions()} */}
+        <OptionButton
+          label="Category"
+          value={selectedCategory}
+          onClick={() => {
+            setDisplaySecondaryPopup(true);
+            setSelectedOption('category');
+          }}
+        />
+        <OptionButton
+          label="Code"
+          value={selectedCode}
+          onClick={() => {
+            setDisplaySecondaryPopup(true);
+            setSelectedOption('code');
+          }}
+          disabled={!selectedCategory}
+        />
+        <OptionButton
+          label="Folder"
+          value={selectedFolder}
+          onClick={() => {
+            setDisplaySecondaryPopup(true);
+            setSelectedOption('folder');
+          }}
+        />
       </div>
       <button
         onClick={handleCreateHightlight}
@@ -92,7 +129,7 @@ const AnnotationPopup = ({ coord, createHighlight }) => {
         Create highlight
       </button>
       <div>
-        {selectedOption && renderSecondaryPopup()}
+        {displaySecondaryPopup && renderSecondaryPopup(selectedOption)}
       </div>
     </div>
   );

@@ -9,17 +9,14 @@ import './annotationPopup.scss';
 // items, item -> belong to secondary popup
 const colors = ['pink', 'orange', 'yellow', 'green', 'blue'];
 const dummyFolders = ['research', 'folder'];
-// const data = {
-//   code: ['Lorem ipsum', 'Lorem 2', 'Lorem 3'],
-//   category: ['popularity', 'origin'],
-//   folder: ['research', 'folder'],
-// };
 
-const AnnotationPopup = ({ coord, createHighlight }) => {
+const AnnotationPopup = ({ coord, createHighlight, existingData }) => {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedCode, setSelectedCode] = useState('');
-  const [selectedFolder, setSelectedFolder] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(
+    existingData.category,
+  );
+  const [selectedCode, setSelectedCode] = useState(existingData.code);
+  const [selectedFolder, setSelectedFolder] = useState(existingData.folder);
   const [selectedOption, setSelectedOption] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [displaySecondaryPopup, setDisplaySecondaryPopup] = useState(false);
@@ -141,6 +138,19 @@ AnnotationPopup.propTypes = {
     Y: PropTypes.number,
   }).isRequired,
   createHighlight: PropTypes.func.isRequired,
+  existingData: PropTypes.shape({
+    category: PropTypes.string,
+    code: PropTypes.string,
+    folder: PropTypes.string,
+  }),
+};
+
+AnnotationPopup.defaultProps = {
+  existingData: {
+    category: '',
+    code: '',
+    folder: '',
+  },
 };
 
 export default AnnotationPopup;

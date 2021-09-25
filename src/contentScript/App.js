@@ -1,9 +1,14 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-// try to only import what i need?
 import { v4 as uuidv4 } from 'uuid';
+import rangy from 'rangy';
+import 'rangy/lib/rangy-classapplier';
+import 'rangy/lib/rangy-highlighter';
+// import 'rangy/lib/rangy-textrange';
+// import 'rangy/lib/rangy-serializer';
 import AnnotationPopup from './components/AnnotationPopup';
 import Sidebar from './components/Sidebar';
+import './App.scss';
 
 // initialise chrome storage
 chrome.storage.sync.get(['fyp_highlights'], (result) => {
@@ -28,12 +33,22 @@ chrome.storage.sync.get(['fyp_categories'], (result) => {
   }
 });
 
+// const removeHighlights = () => {
+//   rangyHighlighter.removeAllHighlights();
+// };
+
 const App = () => {
   const [selectedText, setSelectedText] = useState('');
   const [displayPopup, setDisplayPopup] = useState(false);
   const [coordinates, setCoordinates] = useState({ X: 0, Y: 0 });
   const [highlights, setHighlights] = useState([]);
+  const [savedHighlightData, setSavedHighlightData] = useState({
+    category: '',
+    code: '',
+    folder: '',
+  });
   // alternate refreshHighlights value to trigger rerender
+  const [rangyHighlighter, setRangyHighlighter] = useState({});
   const [triggerRerender, setTriggerRerender] = useState(true);
 
   const selectSomething = (event) => {
@@ -54,13 +69,23 @@ const App = () => {
   };
 
   useEffect(() => {
+    console.log('rangy', rangy);
+    const highlighter = rangy.createHighlighter();
+    highlighter.addClassApplier(
+      rangy.createClassApplier('fyp-highlight--yellow', {
+        elementProperties: {
+          className: 'fyp-highlight',
+        },
+      }),
+    );
+    setRangyHighlighter(highlighter);
+  }, []);
+
+  useEffect(() => {
     document.body.onmouseup = selectSomething;
   });
 
   useEffect(() => {
-    // clear highlights
-    // chrome.storage.sync.set({ fyp_highlights: [] });
-
     // chrome storage api works seemlessly, amazing
     chrome.storage.sync.get(['fyp_highlights'], (result) => {
       console.log('Saved highlights:', result.fyp_highlights);
@@ -68,11 +93,38 @@ const App = () => {
     });
   }, [triggerRerender]);
 
+  const existingHighlightOnclick = (event) => {
+    const highlightId = event.target.getAttribute('fyphighlightid').toString();
+    chrome.storage.sync.get(['fyp_highlights'], (result) => {
+      const savedData = result.fyp_highlights.filter(
+        (item) => (item.id === highlightId),
+      )[0];
+      setSavedHighlightData(savedData.options);
+      setDisplayPopup(true);
+    });
+  };
+
+  const highlightSelectedText = (highlightId) => {
+    rangyHighlighter.highlightSelection('fyp-highlight--yellow');
+    const nodes = rangy.getSelection().getRangeAt(0).getNodes(
+      false,
+      (el) => el.className && el.className.includes('fyp-highlight'),
+    );
+
+    nodes.forEach((node) => {
+      // allow deletion of highlight
+      // eslint-disable-next-line no-param-reassign
+      node.onclick = existingHighlightOnclick;
+      node.setAttribute('fyphighlightid', highlightId);
+    });
+    rangy.getSelection().removeAllRanges();
+  };
+
   // highlight CRUD functions
   const createHighlight = (color, options) => {
-    const id = uuidv4();
+    const highlightId = uuidv4();
     const entry = {
-      id,
+      id: highlightId,
       color,
       text: window.getSelection().toString(),
       options,
@@ -84,6 +136,7 @@ const App = () => {
           console.log('highlight saved: ', result.fyp_highlights);
           setTriggerRerender(!triggerRerender);
           setDisplayPopup(false);
+          highlightSelectedText(highlightId);
         },
       );
     });
@@ -103,6 +156,7 @@ const App = () => {
         <AnnotationPopup
           coord={coordinates}
           createHighlight={createHighlight}
+          existingData={savedHighlightData}
         />
       )}
       <Sidebar highlights={highlights} deleteHighlight={deleteHighlight} />

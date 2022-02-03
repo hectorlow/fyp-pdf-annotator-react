@@ -1,0 +1,53 @@
+.display-pdf {
+  &__top-bar {
+    z-index: 99999;
+    position: sticky;
+    top: 0;
+    line-height: 4vh;
+    background-color: rgb(167, 166, 166);
+    padding-left: 8px;
+    font-size: 18px;
+
+    &__filename {
+      margin-left: 16px;
+      margin-right: 16px;
+    }
+  }
+
+  &__body {
+    width: 100%;
+    background-color: grey;
+    display: flex;
+    flex-direction: row;
+
+    &__canvas {
+      flex: 1;
+      // height: 100vh;
+      // overflow-y: scroll;
+    }
+
+    &__sidebar {
+      margin-left: 8px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      min-width: 280px;
+      max-width: 20%;
+      background-color: white;
+      // padding-bottom: 40px;
+    }
+  }
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas {
+  margin: auto;
+}
+
+// .float-right {
+//   display: inline-block;
+// }

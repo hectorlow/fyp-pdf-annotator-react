@@ -1,0 +1,27 @@
+.anno-popup {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 128px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px 0px;
+}
+
+.anno-color-selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 4px;
+}
+
+.anno-options {
+  text-transform: capitalize;
+}
+
+.anno-create-highlight-btn {
+  cursor: pointer;
+  padding: 2px;
+  background-color: #4ccf32;
+  width: 100%;
+}

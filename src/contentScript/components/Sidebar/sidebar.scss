@@ -8,8 +8,9 @@
   height: calc(100% - 64px);
   background-color: white;
   border: 1px solid green;
+  overflow: scroll;
 
-  &__categories {
+  &__buttons {
     padding: 4px;
   }
 

@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import rangy from 'rangy';
 import 'rangy/lib/rangy-classapplier';
 import 'rangy/lib/rangy-highlighter';
-// import 'rangy/lib/rangy-textrange';
-// import 'rangy/lib/rangy-serializer';
+import 'rangy/lib/rangy-textrange';
+import 'rangy/lib/rangy-serializer';
 import AnnotationPopup from './components/AnnotationPopup';
 import Sidebar from './components/Sidebar';
 import './App.scss';
@@ -69,8 +69,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    console.log('rangy', rangy);
+    // initialise rangy highlighter
     const highlighter = rangy.createHighlighter();
+    // add class to rangy class applier
     highlighter.addClassApplier(
       rangy.createClassApplier('fyp-highlight--yellow', {
         elementProperties: {
@@ -79,6 +80,16 @@ const App = () => {
       }),
     );
     setRangyHighlighter(highlighter);
+
+    chrome.storage.sync.get(['serialized_highlights'], (result) => {
+      console.log(result.serialized_highlights);
+      if (result.serialized_highlights !== undefined) {
+        console.log('deserialize');
+        highlighter.deserialize(
+          decodeURIComponent(result.serialized_highlights),
+        );
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -116,6 +127,7 @@ const App = () => {
       // eslint-disable-next-line no-param-reassign
       node.onclick = existingHighlightOnclick;
       node.setAttribute('fyphighlightid', highlightId);
+      node.setAttribute('id', highlightId);
     });
     rangy.getSelection().removeAllRanges();
   };
@@ -137,6 +149,12 @@ const App = () => {
           setTriggerRerender(!triggerRerender);
           setDisplayPopup(false);
           highlightSelectedText(highlightId);
+
+          chrome.storage.sync.set(
+            { serialized_highlights: rangyHighlighter.serialize() }, () => {
+              console.log('saved serialized highlights');
+            },
+          );
         },
       );
     });
@@ -159,7 +177,7 @@ const App = () => {
           existingData={savedHighlightData}
         />
       )}
-      <Sidebar highlights={highlights} deleteHighlight={deleteHighlight} />
+      {/* <Sidebar highlights={highlights} deleteHighlight={deleteHighlight} /> */}
     </div>
   );
 };

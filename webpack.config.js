@@ -1,15 +1,16 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const WebpackBundleAnalyzer = require('webpack-bundle-analyzer')
-// .BundleAnalyzerPlugin;
+  // .BundleAnalyzerPlugin;
 
 module.exports = {
   mode: 'production',
   entry: {
     // background: './src/background/index.js',
-    contentScript: './src/contentScript/index.js',
-    popup: './src/popup/index.js',
-    options: './src/options/index.js',
+    // contentScript: './src/contentScript/index.js',
+    // popup: './src/popup/index.js',
+    extensionPage: './src/extensionPage/index.js',
+    // options: './src/options/index.js',
   },
   output: {
     filename: '[name].js',
@@ -53,8 +54,21 @@ module.exports = {
     },
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'public/index.html',
+    }),
     // new WebpackBundleAnalyzer(),
   ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
+    compress: true,
+    port: 3000,
+    historyApiFallback: true,
+    hot: true,
+  },
   // plugins: [
   //   new HtmlWebpackPlugin({
   //     template: path.join(__dirname, "src", "index.html"),

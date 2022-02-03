@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+// import App from './App';
 
 // eslint-disable-next-line no-console
 console.log('react content script running');
@@ -11,4 +11,7 @@ const root = document.createElement('div');
 root.innerHTML = "<div id='root'></div>";
 
 document.body.appendChild(root);
-ReactDOM.render(<App />, document.getElementById('root'));
+// ReactDOM.render(<App />, document.getElementById('root'));
+
+const element = <div>hello</div>;
+ReactDOM.render(element, document.getElementById('root'));

@@ -6,11 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'production',
   entry: {
-    // background: './src/background/index.js',
-    // contentScript: './src/contentScript/index.js',
-    // popup: './src/popup/index.js',
+    popup: './src/popup/index.js',
     extensionPage: './src/extensionPage/index.js',
-    // options: './src/options/index.js',
   },
   output: {
     filename: '[name].js',

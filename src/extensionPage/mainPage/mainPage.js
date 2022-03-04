@@ -1,147 +1,180 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   getStorage,
   ref,
   uploadBytesResumable,
-  getDownloadURL,
-  listAll,
 } from 'firebase/storage';
-import { useHistory } from 'react-router-dom';
+import { v4 as uuidV4 } from 'uuid';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import queryString from 'query-string';
+import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
+
+import RenderedPdf from '../screens/renderedPdf/renderedPdf';
+import OldPDFs from '../screens/oldPDFs/oldPDFs';
+import MyFolder from '../screens/myFolder/myFolder';
 import './mainPage.scss';
 
 const MainPage = () => {
   const history = useHistory();
-  const [files, setFiles] = useState([]);
-
   const storage = getStorage();
-  const listRef = ref(storage, 'pdfs');
+  const [currentScreen, setCurrentScreen] = useState('');
+  const [pdfPage, setPdfPage] = useState(false);
+  const [filepath, setFilepath] = useState('');
+  const [selectedFile, setSelectedFile] = useState('');
+  const [scroll, setScroll] = useState(0);
+  const [userId, setUserId] = useState(window.localStorage.getItem('user_id'));
 
-  const redirectToAnnotation = () => {
-    const params = queryString.parse(window.location.search);
-    if (params.filename) {
-      const { filename, scrollY } = params;
-      history.push('/pdf', { filename, scrollY });
+  const backToHome = () => {
+    history.push('/extensionPage.html');
+    setPdfPage(false);
+    setSelectedFile('');
+    setScroll(0);
+  };
+
+  const generateUserId = () => {
+    if (userId === null) {
+      setUserId(uuidV4());
+      window.localStorage.setItem('user_id', userId);
+
+      // create user folder in firebase
+      const userFolderRef = ref(
+        storage, `users/${userId}/myFolder/user_id.txt`,
+      );
+      const file = new Blob([userId], {
+        type: 'text/plain',
+      });
+
+      uploadBytesResumable(userFolderRef, file).then(() => {
+        console.log('User folder created');
+      });
     }
   };
 
-  const getFilesFromFirebase = () => {
-    listAll(listRef)
-      .then((res) => {
-        res.items.forEach((pdf) => {
-          files.push(pdf);
-        });
+  const redirectOrRefreshToScreen = () => {
+    const params = queryString.parse(window.location.search);
+    const { folder, filename, scrollY } = params;
 
-        setFiles([...files]);
-        redirectToAnnotation();
-      })
-      .catch((error) => {
-        // some error
-      });
+    if (folder) {
+      console.log('folder', folder);
+      if (['Old PDFs', 'My Folder'].includes(folder)) {
+        setCurrentScreen(folder);
+        return;
+      }
+    }
+
+    if (filename) {
+      setSelectedFile(filename);
+      if (scrollY) {
+        setScroll(scrollY);
+      }
+      setFilepath(`users/${userId}/myFolder`);
+      setPdfPage(true);
+    }
   };
 
   useEffect(() => {
-    getFilesFromFirebase();
-    redirectToAnnotation();
+    generateUserId();
+    redirectOrRefreshToScreen();
   }, []);
 
-  // const dlRef = ref(storage, 'pdfs/test.pdf');
+  const renderSideBar = () => (
+    <section className="main-page__left-sidebar">
+      <h4>PDF annotator v1.1.0</h4>
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        <Box sx={{ fontWeight: 'bold' }}>New changes in v1.1.0</Box>
+        <li>
+          Files under &apos;Previously Uploaded PDFs&apos;
+          will be removed after 31st March 2022.
+        </li>
+        <li>
+          Now able to delete uploaded files in &apos;My Folder&apos;.
+        </li>
+        <li>
+          Now able to export highlights of multiple files in one csv file using
+          {' '}
+          <CalendarViewMonthIcon sx={{ margin: 0 }} />
+          {' '}
+          icon.
+        </li>
+        <li>
+          Select checkbox(s) to delete or export highlight of file(s).
+        </li>
+      </Typography>
 
-  // getDownloadURL(dlRef).then((url) => {
-  //   console.log(url, 'dl url');
-  //   const object = document.getElementById('mypdf');
-  //   object.setAttribute('data', url);
-  // });
-
-  const handleFileUploadToFirebase = (event) => {
-    const file = event.target.files[0];
-    const metadata = {
-      contentType: 'application/pdf',
-    };
-
-    const pdfRef = ref(storage, `pdfs/${file.name}`);
-    const uploadTask = uploadBytesResumable(pdfRef, file, metadata);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (
-          snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is paused');
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-          default:
-            console.log('default case');
-        }
-      },
-      (error) => {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-          case 'storage/unauthorized':
-            // User doesn't have permission to access the object
-            break;
-          case 'storage/canceled':
-            // User canceled the upload
-            break;
-            // ...
-
-          case 'storage/unknown':
-            // Unknown error occurred, inspect error.serverResponse
-            break;
-          default:
-            // don't know what is the default case
-            break;
-        }
-      },
-      () => {
-        // upload successful
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
-        });
-      });
-
-    files.push(event.target.files[0]);
-    setFiles([...files]);
-  };
-
-  const displayPdf = (filename) => {
-    history.push('/pdf', { filename });
-  };
-
-  const renderFileButtons = () => (
-    <div className="main-page__file-item-container">
-      {files.map((file) => (
-        <button
-          key={file.name}
-          type="button"
-          className="main-page__file-item"
-          onClick={() => displayPdf(file.name)}
-        >
-          {file.name}
-        </button>
-      ))}
-    </div>
+    </section>
   );
 
-  return (
-    <div className="main-page">
-      <section className="main-page__left-sidebar">
-        <h4>Upload file</h4>
+  const renderFolders = () => {
+    const screens = ['Previously Uploaded PDFs', 'My Folder'];
 
-        <input type="file" onChange={handleFileUploadToFirebase} />
-      </section>
+    const handleSelectFolder = (name) => {
+      history.push(`/extensionPage.html?folder=${name}`);
+      setCurrentScreen(name);
+    };
 
+    return (
       <section className="main-page__content">
-        <div className="main-page__content__header">Files</div>
-        {renderFileButtons()}
-        {/* <object id="mypdf" data="https://firebasestorage.googleapis.com/v0/b/fypannotator.appspot.com/o/pdfs%2Ftest.pdf?alt=media&token=b5200b6c-8e75-4a31-9bfa-440c231b3570" type="application/pdf" width="100%" height="100%" /> */}
-        {/* <p><b>Example fallback content</b>: This browser does not support PDFs. Please download the PDF to view it: <a href="http://www.example.com/document.pdf">Download PDF</a>.</p> */}
+        <div className="main-page__content__header">Folders</div>
+
+        <div className="main-page__file-item-container">
+          {screens.map((screenName) => (
+            <button
+              type="button"
+              className="main-page__file-item"
+              onClick={() => handleSelectFolder(screenName)}
+            >
+              {screenName}
+            </button>
+          ))}
+        </div>
       </section>
+    );
+  };
+
+  const renderScreen = (screen) => {
+    switch (screen) {
+      case 'Folders':
+        return renderFolders();
+      case 'Previously Uploaded PDFs':
+        return (
+          <OldPDFs
+            setPdfPage={setPdfPage}
+            setFilepath={setFilepath}
+            setSelectedFile={setSelectedFile}
+            setCurrentScreen={setCurrentScreen}
+          />
+        );
+      case 'My Folder':
+        return (
+          <MyFolder
+            setPdfPage={setPdfPage}
+            setFilepath={setFilepath}
+            setSelectedFile={setSelectedFile}
+            setCurrentScreen={setCurrentScreen}
+          />
+        );
+      default:
+        return renderFolders();
+    }
+  };
+
+  return (
+    <div>
+      {(pdfPage) ? (
+        <RenderedPdf
+          filepath={filepath}
+          filename={selectedFile}
+          scrollY={scroll}
+          backToHome={() => backToHome()}
+        />
+      ) : (
+        <div className="main-page">
+          {renderSideBar()}
+          {renderScreen(currentScreen)}
+        </div>
+      )}
     </div>
   );
 };

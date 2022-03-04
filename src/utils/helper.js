@@ -14,52 +14,54 @@ function repositionTextLayer() {
   }
 }
 
-function exportCSV(filename, prod = true) {
+function exportCSV(files, prod = true) {
   // handle nested object
   // encode uri
   // download link
   // download file name
 
   const csvHeader = [
-    'id',
+    // 'id',
     'text',
     'category',
     'code',
     'filename',
-    'class',
-    'scrollY',
+    // 'class',
+    // 'scrollY',
     'link',
   ];
 
-  const rows = [
+  const csvRows = [
     csvHeader,
   ];
 
-  let highlights = window.localStorage.getItem(`${filename}_array`);
-  highlights = JSON.parse(highlights);
+  files.forEach((filename) => {
+    let highlights = window.localStorage.getItem(`${filename}_array`);
+    highlights = JSON.parse(highlights);
 
-  highlights.forEach((entry) => {
-    let link = window.location.origin;
-    if (prod) {
-      link += '/extensionPage.html';
-    }
-    link += `?filename=${filename}&scrollY=${entry.absScroll}`;
+    highlights.forEach((entry) => {
+      let link = window.location.origin;
+      if (prod) {
+        link += '/extensionPage.html';
+      }
+      link += `?filename=${filename}&scrollY=${entry.absScroll}`;
 
-    const values = [];
-    values.push(entry.id);
-    values.push(entry.text.replace(/\n/, ' '));
-    values.push(entry.category);
-    values.push(entry.code);
-    values.push(filename);
-    values.push(entry.class);
-    values.push(entry.absScroll);
-    values.push(link);
+      const values = [];
+      // values.push(entry.id);
+      values.push(entry.text.replace(/\n/, ' '));
+      values.push(entry.category);
+      values.push(entry.code);
+      values.push(filename);
+      // values.push(entry.class);
+      // values.push(entry.absScroll);
+      values.push(link);
 
-    rows.push(values);
+      csvRows.push(values);
+    });
   });
 
   const csvContent = `data:text/csv;charset=utf-8,${
-    rows.map((e) => e.join(',')).join('\n')}`;
+    csvRows.map((e) => e.join(',')).join('\n')}`;
 
   const encodedUri = encodeURI(csvContent);
   window.open(encodedUri);

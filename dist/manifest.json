@@ -1,28 +1,16 @@
 {
-  "name": "PDF annotator React",
-  "version": "1.0.0",
+  "name": "PDF annotator",
+  "version": "1.0.2",
   "description": "PDF annotator for research papers + integrate ML in the future",
   "manifest_version": 3,
-  "background": {
-    "service_worker": "background.js"
-  },
+  "background": {},
   "action": {
     "default_popup": "popup.html"
   },
-  "options_page": "options.html",
-  "content_scripts": [
-    {
-      "matches": ["http://127.0.0.1/*", "https://developer.chrome.com/*", "<all_urls>"],
-      "js": ["contentScript.js"]
-    }
-  ],
-  "permissions": [
-    "activeTab",
-    "storage"
-  ],
+  "permissions": [],
   "web_accessible_resources": [
     {
-      "resources": ["check.png", "tick.png"],
+      "resources": [],
       "matches": ["http://127.0.0.1/*", "https://developer.chrome.com/*"]
     }
   ]

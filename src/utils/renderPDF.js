@@ -4,13 +4,13 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 
-const renderPDF = (filename, callback) => {
+const renderPDF = (filepath, filename, callback) => {
   // code to initialise pdfjs worker? not sure
   pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
   // reference to pdf in firebase cloud storage
   const storage = getStorage();
-  const pdfRef = ref(storage, `pdfs/${filename}`);
+  const pdfRef = ref(storage, `${filepath}/${filename}`);
 
   let pdfDoc = null;
   let pageNum = 1;

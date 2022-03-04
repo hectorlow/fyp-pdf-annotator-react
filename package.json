@@ -17,7 +17,8 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.4",
     "@mui/material": "^5.2.4",
-    "firebase": "^9.2.0",
+    "@mui/utils": "^5.4.4",
+    "firebase": "^9.6.7",
     "history": "^5.1.0",
     "pdfjs-dist": "^2.10.377",
     "prop-types": "^15.7.2",
@@ -51,7 +52,7 @@
     "webpack": "^5.51.2",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.1.0",
+    "webpack-dev-server": "^4.7.4",
     "worker-loader": "^3.0.8"
   }
 }

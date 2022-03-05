@@ -14,20 +14,12 @@ function repositionTextLayer() {
   }
 }
 
-function exportCSV(files, prod = true) {
-  // handle nested object
-  // encode uri
-  // download link
-  // download file name
-
+function exportCSV(files, rootPath = null) {
   const csvHeader = [
-    // 'id',
     'text',
     'category',
     'code',
     'filename',
-    // 'class',
-    // 'scrollY',
     'link',
   ];
 
@@ -41,19 +33,17 @@ function exportCSV(files, prod = true) {
 
     highlights.forEach((entry) => {
       let link = window.location.origin;
-      if (prod) {
-        link += '/extensionPage.html';
-      }
-      link += `?filename=${filename}&scrollY=${entry.absScroll}`;
+      link += '/extensionPage.html';
+      link += `?filename=${filename.replace(/\s/g, '%20')}`;
+      link += `&scrollY=${entry.absScroll}`;
+
+      if (rootPath !== null) link += `&rootPath=${rootPath}`;
 
       const values = [];
-      // values.push(entry.id);
       values.push(entry.text.replace(/\n/, ' '));
       values.push(entry.category);
       values.push(entry.code);
       values.push(filename);
-      // values.push(entry.class);
-      // values.push(entry.absScroll);
       values.push(link);
 
       csvRows.push(values);

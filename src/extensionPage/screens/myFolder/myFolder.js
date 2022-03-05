@@ -3,7 +3,6 @@ import {
   ref,
   getStorage,
   uploadBytesResumable,
-  getDownloadURL,
   listAll,
   deleteObject,
 } from 'firebase/storage';
@@ -32,7 +31,7 @@ const MyFolder = ({
         res.items.forEach((item) => {
           if (item.name !== 'user_id.txt') {
             retrievedFiles.push(item);
-          };
+          }
         });
 
         setFiles(retrievedFiles);
@@ -95,10 +94,6 @@ const MyFolder = ({
       },
       () => {
         // upload successful
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
-        });
-
         setRefetchFiles(!refetchFiles);
       });
   };

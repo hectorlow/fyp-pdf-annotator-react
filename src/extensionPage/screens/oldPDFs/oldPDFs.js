@@ -30,7 +30,6 @@ const OldPDFs = ({
         setFiles([...files]);
       })
       .catch((error) => {
-        console.log('firebase error', error);
         // some error
       });
   };
@@ -42,7 +41,7 @@ const OldPDFs = ({
   const displayPdf = (filename) => {
     setFilepath('pdfs');
     setSelectedFile(filename);
-    history.push(`/extensionPage.html?filename=${filename}`);
+    history.push(`/extensionPage.html?filename=${filename}&rootPath=pdfs`);
     setPdfPage(true);
   };
 
@@ -52,7 +51,7 @@ const OldPDFs = ({
   };
 
   const handleExport = (filesToExport) => {
-    exportCSV(filesToExport);
+    exportCSV(filesToExport, 'pdfs');
   };
 
   const renderTable = () => {

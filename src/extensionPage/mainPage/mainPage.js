@@ -24,7 +24,6 @@ const MainPage = () => {
   const [filepath, setFilepath] = useState('');
   const [selectedFile, setSelectedFile] = useState('');
   const [scroll, setScroll] = useState(0);
-  const [userId, setUserId] = useState(window.localStorage.getItem('user_id'));
 
   const backToHome = () => {
     history.push('/extensionPage.html');
@@ -34,30 +33,38 @@ const MainPage = () => {
   };
 
   const generateUserId = () => {
-    if (userId === null) {
-      setUserId(uuidV4());
+    let userId = window.localStorage.getItem('user_id');
+
+    // uuid is a string of length 36 characters
+    if (typeof userId !== 'string' || userId.length < 30) {
+      userId = uuidV4();
       window.localStorage.setItem('user_id', userId);
 
       // create user folder in firebase
       const userFolderRef = ref(
         storage, `users/${userId}/myFolder/user_id.txt`,
       );
+
       const file = new Blob([userId], {
         type: 'text/plain',
       });
 
       uploadBytesResumable(userFolderRef, file).then(() => {
-        console.log('User folder created');
+        // user folder created
       });
     }
   };
 
   const redirectOrRefreshToScreen = () => {
     const params = queryString.parse(window.location.search);
-    const { folder, filename, scrollY } = params;
+    const {
+      folder,
+      filename,
+      scrollY,
+      rootPath,
+    } = params;
 
     if (folder) {
-      console.log('folder', folder);
       if (['Old PDFs', 'My Folder'].includes(folder)) {
         setCurrentScreen(folder);
         return;
@@ -69,7 +76,14 @@ const MainPage = () => {
       if (scrollY) {
         setScroll(scrollY);
       }
-      setFilepath(`users/${userId}/myFolder`);
+
+      if (rootPath !== undefined) {
+        setFilepath(rootPath);
+      } else {
+        const userId = window.localStorage.getItem('user_id');
+        setFilepath(`users/${userId}/myFolder`);
+      }
+
       setPdfPage(true);
     }
   };

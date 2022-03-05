@@ -29,7 +29,6 @@ const EditCategoryModal = ({ open, handleClose }) => {
   const handleSelectedCategory = (event) => {
     setSelectedCategory(event.target.value);
     const cat = categoryList.find((item) => item.name === event.target.value);
-    console.log(cat, 'selected cat');
     if (Array.isArray(cat.codes)) cat.codes = cat.codes.join('\n');
     setCategory(cat);
   };
@@ -80,7 +79,6 @@ const EditCategoryModal = ({ open, handleClose }) => {
         (str) => str.replace(/\s/g, '').length > 0,
       ),
     };
-    console.log(categoryList, 'cat list');
 
     window.localStorage.setItem('fyp_categories', JSON.stringify(categoryList));
     handleClose();

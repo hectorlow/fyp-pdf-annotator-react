@@ -18,7 +18,7 @@ import { exportCSV } from '../../../utils/helper';
 const RenderedPdf = ({
   filepath, filename, scrollY, backToHome,
 }) => {
-  console.log('Render pdf file:', filename);
+  console.log('Render pdf file:', filepath, filename);
 
   if (filename === '') return '';
 
@@ -127,7 +127,6 @@ const RenderedPdf = ({
     const renderFinishCallback = () => {
       const [highlightString, highlightArray] = retrieveLocalHighlights();
       renderRetrievedHighlights(highlighter, highlightString, highlightArray);
-      console.log('Render finish');
     };
 
     renderPDF(filepath, filename, renderFinishCallback);
@@ -159,8 +158,8 @@ const RenderedPdf = ({
     selectionObj,
     yOffset,
   ) => {
-    const curScrollOffset = window.scrollY ||
-      window.scrollTop || document.getElementsByTagName('html')[0].scrollTop;
+    const curScrollOffset = window.scrollY || window.scrollTop
+    || document.getElementsByTagName('html')[0].scrollTop;
     return {
       id: uuidv4(),
       start: highlightRanges[0] - baseOffset,
@@ -277,7 +276,7 @@ const RenderedPdf = ({
   };
 
   const handleExport = () => {
-    exportCSV([filename]);
+    exportCSV([filename], filepath);
   };
 
   const handleResetLocalStorage = () => {
